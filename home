@@ -1,0 +1,61 @@
+# Tuneflix Black & White Admin Starter
+
+A starter full-stack admin app using Node.js + Express + PostgreSQL + vanilla HTML/CSS/JS.
+
+## Included
+- Black/white responsive admin UI
+- Admin sign-in with hashed passwords and JWT
+- Dashboard counters from PostgreSQL
+- User/artist applications and approve/reject
+- Label creation/listing
+- Release submission/listing and approve/reject
+- Audio/cover upload endpoint
+- Wallet transaction ledger
+- Support ticket listing/submission endpoint
+- Notifications creation/listing
+- Health endpoint at `/api/health`
+
+## Run locally
+1. Install Node.js 20+ and PostgreSQL.
+2. Copy `.env.example` to `.env`.
+3. Fill `DATABASE_URL`, `JWT_SECRET`, `ADMIN_EMAIL`, and a strong `ADMIN_PASSWORD`.
+   Do not use the example password.
+4. Run `npm install` then `npm start`.
+5. Open `http://localhost:10000`.
+
+The first admin is created automatically on first start only if `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set and the password is not the example placeholder.
+
+## Deploy on Render
+1. Create a managed PostgreSQL database in Render.
+2. Create a Web Service connected to your GitHub repository.
+3. Build command: `npm install`
+4. Start command: `npm start`
+5. Add environment variables from `.env.example`. Use the Render PostgreSQL internal connection string where possible; set `PGSSL=true` if your database connection requires SSL.
+6. Add a persistent disk mounted at `/opt/render/project/src/uploads` if keeping uploaded audio/cover files on the web service. Better for production: use object storage (S3/R2/Supabase Storage) and store permanent object URLs in PostgreSQL.
+7. Set `ADMIN_EMAIL`, a strong `ADMIN_PASSWORD`, and a long random `JWT_SECRET`.
+
+## Important before replacing your live Tuneflix
+This is a standalone starter, not a patch to your current application. It does not know your existing framework, database schema, user sessions, upload provider, or API routes. **Do not overwrite your current GitHub repository or production service with it until your existing code is backed up and the schema/routes are reconciled.**
+
+## Production work still required
+- Integrate with your existing database and user accounts before migration.
+- Move uploads to durable object storage; local Render filesystem is ephemeral unless a persistent disk is attached.
+- Add audit logs, password reset, email verification, CSRF strategy if cookie auth is adopted, stronger per-role permissions, payment gateway integration, royalty statement imports, streaming-platform reporting integrations, and automated tests.
+- Payment entries here are an admin ledger only. No bank transfer, UPI payout, or payment gateway is executed.
+- Analytics graph/stream totals require real DSP reports or imported stream data; this starter does not invent streams.
+- Restrict CORS to your production domain and rotate all secrets before production.
+
+## API quick reference
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `GET /api/health`
+- `GET /api/dashboard` (admin)
+- `POST /api/users/register`
+- `GET /api/users` (admin)
+- `PATCH /api/users/:id/status` (admin)
+- `GET|POST /api/labels` (admin)
+- `GET|POST /api/releases` (admin list; authenticated submission)
+- `PATCH /api/releases/:id/status` (admin)
+- `GET|POST /api/wallet/transactions` (admin)
+- `GET|POST /api/support` (authenticated)
+- `GET|POST /api/notifications` (admin)
